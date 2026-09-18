@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediGraph AI - Bangladesh Clinical Companion</title>
+     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0b0f19',
+                        cardbg: '#131c2e',
+                        bordercolor: '#1e293b',
+                        primary: '#059669',
+                        accent: '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+     
+    <script src="https://unpkg.com/lucide@latest"></script>
+     
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-100 min-h-screen flex flex-col antialiased selection:bg-primary selection:text-white">
+
+    <header class="border-b border-bordercolor bg-cardbg/90 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="activity" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">MediGraph AI</span>
+                    <span class="hidden sm:inline-block text-xs ml-2 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">BD Edition v3.8</span>
+                </div>
+            </div>
+
+             
+            <nav class="hidden md:flex space-x-1 bg-darkbg p-1.5 rounded-xl border border-bordercolor">
+                <button onclick="switchTab('chat')" id="nav-chat" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 bg-primary text-white shadow-md">
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
+                    <span>AI Doctor Hub</span>
+                </button>
+                <button onclick="switchTab('memory')" id="nav-memory" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <i data-lucide="brain" class="w-4 h-4"></i>
+                    <span>Patient Memory</span>
+                </button>
+                <button onclick="switchTab('hospitals')" id="nav-hospitals" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <i data-lucide="map-pin" class="w-4 h-4"></i>
+                    <span>BD Hospitals Hub</span>
+                </button>
+                <button onclick="switchTab('medicines')" id="nav-medicines" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <i data-lucide="pill" class="w-4 h-4"></i>
+                    <span>Dynamic Meds Hub</span>
+                </button>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl font-medium hidden lg:inline-block">
+                    🟢 HAM-R is Live
+                </span>
+            </div>
+        </div>
+    </header>
+
+     
+    <div class="md:hidden flex justify-around bg-cardbg border-b border-bordercolor p-2 sticky top-16 z-40">
+        <button onclick="switchTab('chat')" id="mob-chat" class="flex flex-col items-center p-2 text-primary text-xs font-medium"><i data-lucide="message-square" class="w-5 h-5 mb-1"></i>Chat</button>
+        <button onclick="switchTab('memory')" id="mob-memory" class="flex flex-col items-center p-2 text-slate-400 text-xs font-medium"><i data-lucide="brain" class="w-5 h-5 mb-1"></i>Memory</button>
+        <button onclick="switchTab('hospitals')" id="mob-hospitals" class="flex flex-col items-center p-2 text-slate-400 text-xs font-medium"><i data-lucide="map-pin" class="w-5 h-5 mb-1"></i>Hospitals</button>
+        <button onclick="switchTab('medicines')" id="mob-medicines" class="flex flex-col items-center p-2 text-slate-400 text-xs font-medium"><i data-lucide="pill" class="w-5 h-5 mb-1"></i>Meds</button>
+    </div>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col">
+
+         
+        <section id="tab-chat" class="tab-content flex-1 flex flex-col h-[calc(100vh-140px)]">
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-cardbg border border-bordercolor p-4 rounded-2xl shadow-sm">
+                <div>
+                    <h2 class="text-lg font-bold flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>HAM-R Based Medical Assistant (Context-Aware)</span>
+                    </h2>
+                    <p class="text-xs text-slate-400">Your chat queries automatically incorporate your saved patient records for precise AI evaluation.</p>
+                </div>
+                <span id="active-memory-badge" class="text-xs px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl font-medium">
+                    0 records linked to chat
+                </span>
+            </div>
+
+             
+            <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 scroll-smooth">
+                <div class="flex items-start space-x-3">
+                    <div class="bg-emerald-600 p-2.5 rounded-xl text-white shadow-md flex-shrink-0">
+                        <i data-lucide="bot" class="w-5 h-5"></i>
+                    </div>
+                    <div class="bg-cardbg border border-bordercolor p-4 rounded-2xl max-w-2xl shadow-sm">
+                        <p class="text-sm font-semibold text-emerald-400 mb-1">Medigraph AI</p>
+                        <p class="text-sm text-slate-200">Assalamu Alaikum! I am connected to HAM-R. Ask me anything about your medical condition, symptoms, or records.</p>
+                        <span class="text-[10px] text-slate-500 mt-2 block">Just now</span>
+                    </div>
+                </div>
+            </div>
+
+             
+            <div class="bg-cardbg border border-bordercolor p-3 rounded-2xl shadow-lg flex items-center space-x-3">
+                <textarea id="chat-input" rows="1" placeholder="Ask your question (e.g., 'What is my condition based on my records?')..." class="flex-1 bg-transparent border-0 focus:ring-0 text-sm text-slate-100 placeholder-slate-500 resize-none outline-none py-2 px-1 max-h-32"></textarea>
+                <button onclick="sendChatMessage()" id="send-btn" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white p-3 rounded-xl shadow-md transition flex items-center justify-center">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </section>
+
+         
+        <section id="tab-memory" class="tab-content hidden flex-1 flex flex-col space-y-6">
+            <div class="bg-cardbg border border-bordercolor p-6 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+                        <i data-lucide="brain" class="w-6 h-6 text-primary"></i>
+                        <span>Patient Medical History & Test Records Vault</span>
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-1">Add your vitals or lab reports. They will be automatically referenced in every chat query.</p>
+                </div>
+                <button onclick="openAddMemoryModal()" class="bg-primary hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2 shadow-md">
+                    <i data-lucide="plus" class="w-4 h-4"></i><span>Add Health Record</span>
+                </button>
+            </div>
+            <div id="memory-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6"></div>
+        </section>
+
+         
+        <section id="tab-hospitals" class="tab-content hidden flex-1 flex flex-col space-y-6">
+            <div class="bg-cardbg border border-bordercolor p-6 rounded-2xl shadow-sm">
+                <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+                    <i data-lucide="map-pin" class="w-6 h-6 text-primary"></i>
+                    <span>Verified Bangladesh Hospitals Hub</span>
+                </h2>
+                <p class="text-sm text-slate-400 mt-1">Directory of major medical institutions across divisions.</p>
+            </div>
+            <div id="hospitals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-6"></div>
+        </section>
+
+         
+        <section id="tab-medicines" class="tab-content hidden flex-1 flex flex-col space-y-6">
+            <div class="bg-cardbg border border-bordercolor p-6 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+                        <i data-lucide="pill" class="w-6 h-6 text-primary"></i>
+                        <span>Dynamic Bangladeshi Medicine & Brand Hub</span>
+                    </h2>
+                    <p class="text-sm text-slate-400 mt-1">Search any medicine. If missing locally, click AI Search to query online data sources instantly.</p>
+                </div>
+                <button onclick="openAddMedModal()" class="bg-primary hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm transition flex items-center space-x-2 shadow-md">
+                    <i data-lucide="plus" class="w-4 h-4"></i><span>Add Custom Med</span>
+                </button>
+            </div>
+
+             
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <div class="flex-1 flex items-center bg-cardbg border border-bordercolor rounded-2xl p-2 shadow-sm w-full">
+                    <i data-lucide="search" class="w-5 h-5 text-slate-400 ml-3"></i>
+                    <input type="text" id="med-search-input" oninput="filterMedicines()" placeholder="Type any medicine name (e.g., Napa, Sergel, Maxpro, Rantac)..." class="flex-1 bg-transparent border-0 focus:ring-0 text-sm text-slate-100 placeholder-slate-500 px-3 outline-none">
+                </div>
+                <button onclick="aiFetchMedicine()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-5 py-3 rounded-2xl text-sm font-semibold transition flex items-center justify-center space-x-2 shadow-md flex-shrink-0">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span>AI Search & Gather Med Info</span>
+                </button>
+            </div>
+
+             
+            <div id="medicine-result-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6"></div>
+        </section>
+
+    </main>
+
+     
+    <div id="memory-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-cardbg border border-bordercolor rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeAddMemoryModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-lg font-bold flex items-center space-x-2 mb-2"><i data-lucide="brain" class="w-5 h-5 text-primary"></i><span>Add Patient Health Record</span></h3>
+            <div class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Record Title / Vital Name</label>
+                    <input type="text" id="mem-title" placeholder="e.g., Blood Pressure Reading" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Details & Values (e.g., 189/94 mmHg)</label>
+                    <textarea id="mem-content" rows="3" placeholder="Enter findings or readings..." class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                    <select id="mem-type" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none">
+                        <option value="Vital Sign">Vital Sign (BP, Pulse, Temp)</option>
+                        <option value="Lab Report">Lab Report</option>
+                        <option value="Prescription">Prescription Note</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeAddMemoryModal()" class="px-4 py-2 rounded-xl text-sm text-slate-300">Cancel</button>
+                <button onclick="saveMemoryRecord()" class="px-5 py-2 rounded-xl text-sm bg-primary text-white">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+     
+    <div id="med-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-cardbg border border-bordercolor rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeAddMedModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-lg font-bold flex items-center space-x-2 mb-2"><i data-lucide="pill" class="w-5 h-5 text-primary"></i><span>Add Bangladeshi Medicine to Hub</span></h3>
+            <div class="space-y-3 mt-4">
+                <div><label class="block text-xs text-slate-300 mb-1">Brand Name</label><input type="text" id="new-med-name" placeholder="e.g., Napa Extra" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2 text-sm text-slate-100 outline-none"></div>
+                <div><label class="block text-xs text-slate-300 mb-1">Generic Name & Strength</label><input type="text" id="new-med-generic" placeholder="e.g., Paracetamol 500mg" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2 text-sm text-slate-100 outline-none"></div>
+                <div><label class="block text-xs text-slate-300 mb-1">Manufacturer</label><input type="text" id="new-med-mfg" placeholder="e.g., Beximco Pharmaceuticals" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2 text-sm text-slate-100 outline-none"></div>
+                <div><label class="block text-xs text-slate-300 mb-1">Indication / Usage</label><input type="text" id="new-med-ind" placeholder="e.g., Fever, headache" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2 text-sm text-slate-100 outline-none"></div>
+                <div><label class="block text-xs text-slate-300 mb-1">Dosage Note</label><input type="text" id="new-med-dos" placeholder="e.g., 1 tablet every 6 hours" class="w-full bg-darkbg border border-bordercolor rounded-xl px-4 py-2 text-sm text-slate-100 outline-none"></div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+                <button onclick="closeAddMedModal()" class="px-4 py-2 rounded-xl text-sm text-slate-300">Cancel</button>
+                <button onclick="saveCustomMedicine()" class="px-5 py-2 rounded-xl text-sm bg-primary text-white">Save Medicine</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let state = {
+            apiKey: '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',
+            model: 'openai/gpt-4o-mini',
+            memories: JSON.parse(localStorage.getItem('healthvault_bd_memories') || JSON.stringify([
+                { id: 'sample-1', title: 'Blood Pressure Reading', content: '189/94 mmHg (Extremely High / Stage 2 Hypertension)', type: 'Vital Sign', date: new Date().toLocaleDateString() }
+            ])),
+            medicines: JSON.parse(localStorage.getItem('healthvault_bd_medicines') || JSON.stringify([
+                { name: "Napa / Napa Extend", generic: "Paracetamol 500mg / 665mg", manufacturer: "Beximco Pharmaceuticals", indication: "Fever, headache, body ache.", dosage: "1-2 tablets every 4-6 hours." },
+                { name: "Seclo", generic: "Omeprazole 20mg Capsule", manufacturer: "Square Pharmaceuticals", indication: "Gastric ulcers, GERD, acid reflux.", dosage: "20mg once daily before breakfast." },
+                { name: "Maxpro", generic: "Esomeprazole 20mg / 40mg", manufacturer: "Renata Limited", indication: "Erosive esophagitis, acid reflux.", dosage: "20mg - 40mg daily." },
+                { name: "Azithrocin", generic: "Azithromycin 500mg", manufacturer: "Square Pharmaceuticals", indication: "Respiratory infections, tonsillitis.", dosage: "500mg once daily for 3 days." },
+                { name: "Fexo", generic: "Fexofenadine HCl 120mg", manufacturer: "Square Pharmaceuticals", indication: "Allergic rhinitis, hives.", dosage: "120mg once daily." },
+                { name: "Monas", generic: "Montelukast Sodium 10mg", manufacturer: "Square Pharmaceuticals", indication: "Asthma and allergy maintenance.", dosage: "1 tablet daily in the evening." },
+                { name: "Sergel", generic: "Esomeprazole Magnesium", manufacturer: "Healthcare Pharmaceuticals", indication: "Gastric acid reduction, heartburn.", dosage: "20mg or 40mg daily." },
+                { name: "Ace Plus", generic: "Paracetamol + Caffeine", manufacturer: "Square Pharmaceuticals", indication: "Severe headache, migraine, fever.", dosage: "1 tablet every 6 hours." }
+            ]))
+        };
+
+        const bdHospitals = [
+            { id: 1, name: "Dhaka Medical College Hospital (DMCH)", division: "Dhaka", type: "Public Tertiary", address: "Secretariat Rd, Dhaka 1000", phone: "+880 2-55165088", emergency: "24/7 Available" },
+            { id: 2, name: "BSMMU Hospital", division: "Dhaka", type: "Medical University", address: "Shahbag, Dhaka 1000", phone: "+880 2-55165760", emergency: "24/7 Emergency & Trauma" },
+            { id: 3, name: "Square Hospital Limited", division: "Dhaka", type: "Private Hospital", address: "West Panthapath, Dhaka 1205", phone: "+880 9612-010616", emergency: "24/7 ICU & Emergency" },
+            { id: 4, name: "Evercare Hospital Dhaka", division: "Dhaka", type: "Private Multi-disciplinary", address: "Bashundhara R/A, Dhaka 1229", phone: "+880 9666-833833", emergency: "24/7 Emergency Center" },
+            { id: 5, name: "Chittagong Medical College Hospital", division: "Chattogram", type: "Public Tertiary", address: "KB Fazlul Kader Rd, Chattogram", phone: "+880 31-616340", emergency: "24/7 Emergency Care" },
+            { id: 6, name: "Sylhet MAG Osmani Medical College", division: "Sylhet", type: "Public Tertiary", address: "Osmani Hospital Rd, Sylhet", phone: "+880 821-713506", emergency: "24/7 Emergency" }
+        ];
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            ['chat', 'memory', 'hospitals', 'medicines'].forEach(t => {
+                const btn = document.getElementById('nav-' + t);
+                const mobBtn = document.getElementById('mob-' + t);
+                if (t === tabId) {
+                    if(btn) btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 bg-primary text-white shadow-md";
+                    if(mobBtn) mobBtn.className = "flex flex-col items-center p-2 text-primary text-xs font-medium";
+                } else {
+                    if(btn) btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50";
+                    if(mobBtn) mobBtn.className = "flex flex-col items-center p-2 text-slate-400 text-xs font-medium";
+                }
+            });
+            lucide.createIcons();
+            if(tabId === 'memory') renderMemories();
+            if(tabId === 'hospitals') renderHospitals(bdHospitals);
+            if(tabId === 'medicines') renderMedicines(state.medicines);
+            if(tabId === 'chat') updateMemoryBadge();
+        }
+
+        function updateMemoryBadge() {
+            const count = state.memories.length;
+            const badge = document.getElementById('active-memory-badge');
+            if(badge) badge.innerText = `${count} record${count === 1 ? '' : 's'} linked to chat`;
+        }
+
+        
+        function saveMemoriesStorage() { 
+            localStorage.setItem('healthvault_bd_memories', JSON.stringify(state.memories)); 
+            updateMemoryBadge();
+        }
+        function openAddMemoryModal() { document.getElementById('memory-modal').classList.remove('hidden'); }
+        function closeAddMemoryModal() { document.getElementById('memory-modal').classList.add('hidden'); }
+        function saveMemoryRecord() {
+            const title = document.getElementById('mem-title').value.trim();
+            const content = document.getElementById('mem-content').value.trim();
+            const type = document.getElementById('mem-type').value;
+            if(!title || !content) return alert("Please fill in all fields.");
+            state.memories.unshift({ id: Date.now().toString(), title, content, type, date: new Date().toLocaleDateString() });
+            saveMemoriesStorage(); closeAddMemoryModal(); renderMemories();
+        }
+        function deleteMemory(id) { state.memories = state.memories.filter(m => m.id !== id); saveMemoriesStorage(); renderMemories(); }
+        function renderMemories() {
+            updateMemoryBadge();
+            const grid = document.getElementById('memory-grid');
+            if(state.memories.length === 0) { grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500 bg-cardbg/40 roundeda-2xl border border-dashed border-bordercolor">No patient records saved.</div>`; return; }
+            grid.innerHTML = state.memories.map(m => `
+                <div class="bg-cardbg border border-bordercolor p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2"><span class="text-xs px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-medium">${m.type}</span><span class="text-xs text-slate-500">${m.date}</span></div>
+                        <h4 class="text-base font-semibold text-slate-100 mb-1">${m.title}</h4>
+                        <p class="text-sm text-slate-300 font-mono bg-darkbg/50 p-2.5 rounded-xl border border-bordercolor mt-2">${m.content}</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-bordercolor flex justify-end"><button onclick="deleteMemory('${m.id}')" class="text-xs text-rose-400 hover:underline">Delete Record</button></div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        
+        function renderHospitals(list) {
+            document.getElementById('hospitals-grid').innerHTML = list.map(h => `
+                <div class="bg-cardbg border border-bordercolor p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2"><span class="text-xs px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400">${h.division}</span><span class="text-xs text-slate-400">${h.type}</span></div>
+                        <h4 class="text-base font-bold text-slate-100 mb-1">${h.name}</h4>
+                        <p class="text-xs text-slate-400 mb-3">${h.address}</p>
+                    </div>
+                    <div class="pt-3 border-t border-bordercolor space-y-2 text-xs">
+                        <div class="flex justify-between"><span class="text-slate-400">Hotline:</span><a href="tel:${h.phone}" class="text-emerald-400 font-bold">${h.phone}</a></div>
+                        <div class="text-[11px] text-teal-300 bg-teal-500/10 px-2 py-1 rounded text-center">${h.emergency}</div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        
+        function saveMedicinesStorage() { localStorage.setItem('healthvault_bd_medicines', JSON.stringify(state.medicines)); }
+        function openAddMedModal() { document.getElementById('med-modal').classList.remove('hidden'); }
+        function closeAddMedModal() { document.getElementById('med-modal').classList.add('hidden'); }
+        function saveCustomMedicine() {
+            const name = document.getElementById('new-med-name').value.trim();
+            const generic = document.getElementById('new-med-generic').value.trim();
+            const manufacturer = document.getElementById('new-med-mfg').value.trim();
+            const indication = document.getElementById('new-med-ind').value.trim();
+            const dosage = document.getElementById('new-med-dos').value.trim();
+            if(!name || !generic) return alert("Enter at least brand and generic name.");
+            state.medicines.unshift({ name, generic, manufacturer, indication, dosage });
+            saveMedicinesStorage(); closeAddMedModal(); renderMedicines(state.medicines);
+        }
+
+        function renderMedicines(list) {
+            const container = document.getElementById('medicine-result-container');
+            if(list.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 bg-cardbg/40 rounded-2xl border border-dashed border-bordercolor">No matches found locally. Click <strong class="text-blue-400">"AI Search & Gather Med Info"</strong> to query online pharmaceutical information.</div>`;
+                return;
+            }
+            container.innerHTML = list.map(m => `
+                <div class="bg-cardbg border border-bordercolor p-5 rounded-2xl shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-bordercolor pb-3">
+                        <div>
+                            <h4 class="text-base font-bold text-slate-100">${m.name}</h4>
+                            <p class="text-xs text-emerald-400 font-medium">${m.generic}</p>
+                        </div>
+                        <span class="text-[10px] px-2.5 py-1 bg-slate-800 text-slate-300 rounded-lg border border-bordercolor">${m.manufacturer || 'BD Pharma'}</span>
+                    </div>
+                    <div class="text-xs space-y-2">
+                        <p class="text-slate-300"><strong class="text-slate-200">Indication:</strong> ${m.indication}</p>
+                        <p class="text-slate-300"><strong class="text-slate-200">Dosage:</strong> ${m.dosage}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function filterMedicines() {
+            const query = document.getElementById('med-search-input').value.toLowerCase().trim();
+            const filtered = state.medicines.filter(m => m.name.toLowerCase().includes(query) || m.generic.toLowerCase().includes(query));
+            renderMedicines(filtered);
+        }
+
+        async function aiFetchMedicine() {
+            const query = document.getElementById('med-search-input').value.trim();
+            if(!query) return alert("Type a medicine name in the search bar first to search online!");
+
+            const container = document.getElementById('medicine-result-container');
+            container.innerHTML = `<div class="col-span-full py-12 text-center text-blue-400 animate-pulse bg-cardbg/40 rounded-2xl border border-bordercolor">Searching medical databases and gathering info for "${query}" via MediGraph AI...</div>`;
+
+            try {
+                const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${state.apiKey}`,
+                        "HTTP-Referer": window.location.href,
+                        "X-Title": "HealthVault AI Bangladesh",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: state.model,
+                        max_tokens: 600, 
+                        messages: [
+                            { 
+                                role: "system", 
+                                content: "You are a clinical pharmacologist. Return ONLY a strict JSON object with exact keys: name, generic, manufacturer, indication, dosage. No markdown block formatting, no extra text." 
+                            },
+                            { 
+                                role: "user", 
+                                content: `Find and return accurate pharmaceutical brand details for medicine: ${query}` 
+                            }
+                        ]
+                    })
+                });
+
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                if (!data.choices || !data.choices[0]) throw new Error("API did not return choices.");
+                
+                let rawText = data.choices[0].message.content.trim();
+                rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                
+                const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+                if (!jsonMatch) throw new Error("Could not parse JSON response.");
+                
+                const newMed = JSON.parse(jsonMatch[0]);
+                state.medicines.unshift(newMed);
+                saveMedicinesStorage();
+                renderMedicines(state.medicines);
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center space-y-3 bg-cardbg/40 rounded-2xl border border-dashed border-bordercolor p-6">
+                        <p class="text-rose-400 text-sm">Could not fetch online details automatically: ${escapeHtml(err.message)}</p>
+                        <p class="text-xs text-slate-400">You can add it manually using the <button onclick="openAddMedModal()" class="text-emerald-400 font-bold underline">"Add Custom Med"</button> button.</p>
+                    </div>`;
+            }
+        }
+
+        
+        async function sendChatMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const message = inputEl.value.trim();
+            if(!message) return;
+            inputEl.value = '';
+            const chatMessages = document.getElementById('chat-messages');
+
+            chatMessages.innerHTML += `
+                <div class="flex items-start justify-end space-x-3">
+                    <div class="bg-cardbg border border-bordercolor p-4 rounded-2xl max-w-2xl shadow-sm">
+                        <p class="text-sm font-semibold text-primary mb-1">You</p>
+                        <p class="text-sm text-slate-200">${escapeHtml(message)}</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            const memoryContextStr = state.memories.length > 0 
+                ? state.memories.map(m => `- [${m.type}] ${m.title}: ${m.content} (Recorded on ${m.date})`).join('\n')
+                : "No prior records logged in vault.";
+
+            const systemPrompt = `You are MediGraph AI, an advanced clinical AI assistant created by Aftab Sunny (Creator of HAM-R). 
+You are backed and supported by HAM-R. Whenever a user asks about your identity, name, creator, or who built you, explicitly state that you are MediGraph AI, created by Aftab Sunny, and supported by HAM-R.
+PATIENT'S SAVED MEDICAL VAULT RECORDS:
+${memoryContextStr}
+Provide clear, professional clinical guidance.`;
+
+            const loadingId = 'loading-' + Date.now();
+            chatMessages.innerHTML += `
+                <div id="${loadingId}" class="flex items-start space-x-3">
+                    <div class="bg-emerald-600 p-2.5 rounded-xl text-white shadow-md"><i data-lucide="bot" class="w-5 h-5"></i></div>
+                    <div class="bg-cardbg border border-bordercolor p-4 rounded-2xl max-w-2xl shadow-sm text-slate-400 text-sm animate-pulse">
+                        HAM-R is processing your query...
+                    </div>
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            lucide.createIcons();
+
+            let aiReply = "";
+
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${state.apiKey}`,
+                        "HTTP-Referer": window.location.href,
+                        "X-Title": "HealthVault AI Bangladesh",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        model: state.model,
+                        max_tokens: 1000, 
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: message }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error.message || "HAM-R Backend Error");
+                }
+                if (data.choices && data.choices[0]) {
+                    aiReply = data.choices[0].message.content;
+                } else {
+                    throw new Error("Invalid response schema received from HAM-R.");
+                }
+            } catch (e) {
+                aiReply = `⚠️ **API Error:** ${e.message}\n\n*Tip:* Your key may have hit its free tier or credit limit. You can visit [HAM-R Keys Workspace] Check HAM-R to refill or check your balance.`;
+            }
+
+            document.getElementById(loadingId).remove();
+            chatMessages.innerHTML += `
+                <div class="flex items-start space-x-3">
+                    <div class="bg-emerald-600 p-2.5 rounded-xl text-white shadow-md"><i data-lucide="bot" class="w-5 h-5"></i></div>
+                    <div class="bg-cardbg border border-bordercolor p-4 rounded-2xl max-w-2xl shadow-sm">
+                        <p class="text-sm font-semibold text-emerald-400 mb-1">Medigraph AI</p>
+                        <p class="text-sm text-slate-200 whitespace-pre-line">${escapeHtml(aiReply)}</p>
+                    </div>
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            lucide.createIcons();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        
+document.getElementById('chat-input').addEventListener('keydown', function (event) {
+    
+    
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendChatMessage();
+    }
+});
+
+        
+        renderMedicines(state.medicines);
+        updateMemoryBadge();
+    </script>
+</body>
+
+<!-- &copy; 2026 Aftab Sunny. All Rights Reserved. Unauthorized copying and distribution is strictly prohibited. -->
+  
+</html>
